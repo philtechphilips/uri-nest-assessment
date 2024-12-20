@@ -9,12 +9,12 @@ export class ApplicationsService {
         const startIndex = (page - 1) * limit;
         const endIndex = startIndex + limit;
       
-        const items = applications.slice(startIndex, endIndex); // Extract items based on pagination
-        const totalPages = Math.ceil(applications.length / limit); // Calculate total pages based on the limit
+        const items = applications.slice(startIndex, endIndex); 
+        const totalPages = Math.ceil(applications.length / limit); 
       
         return {
-          items, // Corrected key from `item` to `items` to imply multiple items
-          totalPages, // Return the total number of pages
+          items, 
+          totalPages, 
         };
       }      
 
