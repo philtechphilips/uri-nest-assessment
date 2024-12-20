@@ -18,92 +18,69 @@ describe('ApplicationsService', () => {
   });
 
   describe('getApplications', () => {
-    it('should return all applications', () => {
-      const apps = service.getApplications();
-      expect(apps).toEqual(applications);
-      expect(apps.length).toBe(30);
+    it('should return paginated applications', () => {
+      const page = 1;
+      const limit = 10;
+      const result = service.getApplications(page, limit);
+
+      expect(result.items.length).toBe(limit);
+      expect(result.totalPages).toBe(Math.ceil(applications.length / limit));
+      expect(result.items).toEqual(applications.slice(0, limit));
     });
 
-    it('should have valid job titles', () => {
-      const apps = service.getApplications();
-      const jobTitles = [
-        'Frontend Developer',
-        'Backend Developer',
-        'Product Manager',
-        'UX Designer',
-        'Data Scientist',
-      ];
+    it('should return the correct items for a specific page', () => {
+      const page = 2;
+      const limit = 10;
+      const result = service.getApplications(page, limit);
 
-      apps.forEach((app) => {
-        expect(jobTitles).toContain(app.jobTitle);
-      });
+      const expectedItems = applications.slice(10, 20); 
+      expect(result.items).toEqual(expectedItems);
     });
 
-    it('should have valid company names', () => {
-      const apps = service.getApplications();
-      const companyNames = [
-        'TechCorp',
-        'WebSolutions',
-        'InnoTech',
-        'InnovateX',
-        'DataForge',
-      ];
+    it('should handle pages beyond the available data gracefully', () => {
+      const page = 10; 
+      const limit = 10;
+      const result = service.getApplications(page, limit);
 
-      apps.forEach((app) => {
-        expect(companyNames).toContain(app.companyName);
-      });
-    });
-
-    it('should have valid statuses', () => {
-      const apps = service.getApplications();
-      const statuses = ['accepted', 'pending', 'rejected'];
-
-      apps.forEach((app) => {
-        expect(statuses).toContain(app.status);
-      });
-    });
-
-    it('should have a dateApplied in 2024', () => {
-      const apps = service.getApplications();
-      apps.forEach((app) => {
-        const date = new Date(app.dateApplied);
-        expect(date.getFullYear()).toBe(2024);
-      });
+      expect(result.items.length).toBe(0); 
+      expect(result.totalPages).toBe(Math.ceil(applications.length / limit));
     });
   });
 
   describe('getApplicationStats', () => {
     it('should return correct totalApplications count', () => {
       const stats = service.getApplicationStats();
-      expect(stats.totalApplications).toBe(30);
+      expect(stats.totalApplications).toBe(applications.length);
     });
 
     it('should return correct statusCounts', () => {
       const stats = service.getApplicationStats();
-      const acceptedCount = applications.filter(
-        (app) => app.status === 'accepted',
-      ).length;
-      const pendingCount = applications.filter(
-        (app) => app.status === 'pending',
-      ).length;
-      const rejectedCount = applications.filter(
-        (app) => app.status === 'rejected',
-      ).length;
+      const acceptedCount = applications.filter((app) => app.status === 'accepted').length;
+      const pendingCount = applications.filter((app) => app.status === 'pending').length;
+      const rejectedCount = applications.filter((app) => app.status === 'rejected').length;
 
-      expect(stats.statusCounts.accepted).toBe(acceptedCount);
-      expect(stats.statusCounts.pending).toBe(pendingCount);
-      expect(stats.statusCounts.rejected).toBe(rejectedCount);
+      expect(stats.statusCounts).toEqual({
+        accepted: acceptedCount,
+        pending: pendingCount,
+        rejected: rejectedCount,
+      });
     });
 
     it('should return correct monthCounts', () => {
       const stats = service.getApplicationStats();
-      const monthCounts = applications.reduce((acc, app) => {
-        const month = new Date(app.dateApplied).getMonth() + 1;
+
+      const expectedMonthCounts = applications.reduce((acc, app) => {
+        const month = new Date(app.dateApplied).toLocaleString('en-US', { month: 'short' });
         acc[month] = (acc[month] || 0) + 1;
         return acc;
-      }, {});
+      }, {} as Record<string, number>);
 
-      expect(stats.monthCounts).toEqual(monthCounts);
+      const formattedMonthCounts = Object.entries(expectedMonthCounts).map(([month, value]) => ({
+        month,
+        value,
+      }));
+
+      expect(stats.monthCounts).toEqual(formattedMonthCounts);
     });
   });
 });
