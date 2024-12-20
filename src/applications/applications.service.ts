@@ -5,8 +5,10 @@ import { applications } from '../constants/applictations';
 
 @Injectable()
 export class ApplicationsService {
-  getApplications(): JobApplication[] {
-    return applications;
+  getApplications(page: number = 1, limit: number = 10): JobApplication[] {
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    return applications.slice(startIndex, endIndex);
   }
 
   getApplicationStats() {
@@ -20,12 +22,25 @@ export class ApplicationsService {
           .length,
       },
       monthCounts: applications.reduce((acc, app) => {
-        const monthIndex = new Date(app.dateApplied).getMonth(); 
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const month = monthNames[monthIndex]; 
+        const monthIndex = new Date(app.dateApplied).getMonth();
+        const monthNames = [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
+        ];
+        const month = monthNames[monthIndex];
         acc[month] = (acc[month] || 0) + 1;
         return acc;
-      }, {})      
+      }, {}),
     };
     return stats;
   }
