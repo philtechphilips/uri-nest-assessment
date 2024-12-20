@@ -20,10 +20,12 @@ export class ApplicationsService {
           .length,
       },
       monthCounts: applications.reduce((acc, app) => {
-        const month = new Date(app.dateApplied).getMonth() + 1;
+        const monthIndex = new Date(app.dateApplied).getMonth(); 
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const month = monthNames[monthIndex]; 
         acc[month] = (acc[month] || 0) + 1;
         return acc;
-      }, {}),
+      }, {})      
     };
     return stats;
   }
