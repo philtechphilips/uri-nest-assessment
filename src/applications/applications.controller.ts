@@ -10,4 +10,9 @@ export class ApplicationsController {
   getApplications() {
     return this.applicationsService.getApplications();
   }
+
+  @Get('stats')
+  getApplicationStats() {
+    return this.applicationsService.getApplicationStats();
+  }
 }

@@ -6,16 +6,10 @@ import { config } from './shared/config/config.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const sawggerConfig = new DocumentBuilder()
-    .setTitle('Task Manager documentation')
-    .setDescription('Contains all API related to the task manager')
+    .setTitle('URI assessment documentation')
+    .setDescription('Contains all API related to the URI Assessment')
     .setVersion('v1.0')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-      },
-      'access-token',
-    )
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, sawggerConfig);
   SwaggerModule.setup('/v1', app, document);
