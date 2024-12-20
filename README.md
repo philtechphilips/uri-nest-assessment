@@ -7,7 +7,7 @@ URI NEST ASSESSMENT.
 
 ## Project setup
 
-Create a .env file and copy what is in .env.examples to it 
+Create a .env file and copy what is in .env.examples to it
 
 ```bash
 $ npm install
