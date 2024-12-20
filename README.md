@@ -13,6 +13,12 @@ Create a .env file and copy what is in .env.examples to it
 $ npm install
 ```
 
+If there are dependency issue kindly run 
+
+```bash
+$ npm install --legacy-peer-deps
+```
+
 ## Compile and run the project
 
 ```bash
